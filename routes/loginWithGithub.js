@@ -28,7 +28,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "/auth/github/callback",
+      callbackURL: "https://skill-notes.vercel.app/auth/github/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       const user = await findUserBySocialId(profile.id);
