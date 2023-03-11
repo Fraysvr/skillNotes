@@ -28,7 +28,7 @@ passport.use(
     {
       clientID: process.env.VK_CLIENT_ID,
       clientSecret: process.env.VK_CLIENT_SECRET,
-      callbackURL: "/auth/vk/callback",
+      callbackURL: "https://skill-notes.vercel.app/auth/vk/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       const user = await findUserBySocialId(profile.id);
