@@ -31,19 +31,18 @@ passport.use(
       callbackURL: "/auth/vk/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log(profile);
-      // const user = await findUserBySocialId(profile.id);
-      // if (user) {
-      //   return done(null, user);
-      // }
-      // const newUser = await createNewUser(
-      //   profile.displayName,
-      //   nanoid(),
-      //   profile.provider,
-      //   profile.id,
-      //   profile._json.email
-      // );
-      // return done(null, newUser);
+      const user = await findUserBySocialId(profile.id);
+      if (user) {
+        return done(null, user);
+      }
+      const newUser = await createNewUser(
+        profile.displayName,
+        nanoid(),
+        profile.provider,
+        profile.id,
+        profile._json.email
+      );
+      return done(null, newUser);
     }
   )
 );
