@@ -11,6 +11,7 @@ const deleteAllArchivedNote = require("../services/deleteAllArchivedNotes");
 const PDFDocument = require("pdfkit");
 const { Readable } = require("stream");
 const path = require("path");
+const transliteration = require("transliteration").slugify;
 
 const router = express.Router();
 router.post("/get", auth(), needAuth(), async (req, res) => {
@@ -79,7 +80,7 @@ router.get("/:id/pdf", auth(), needAuth(), async (req, res) => {
     margin: { top: 72, bottom: 72, left: 72, right: 36 },
   });
 
-  res.setHeader("Content-disposition", `attachment; filename=${notes.title}.pdf`);
+  res.setHeader("Content-disposition", `attachment; filename=${transliteration(notes.title)}.pdf`);
   res.setHeader("Content-type", "application/pdf");
 
   const chunks = [];
