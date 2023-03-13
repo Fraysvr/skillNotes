@@ -42,15 +42,17 @@
   <div class="uk-margin-bottom">
     {#if entry.isArchived}
       <button on:click={doDelete} class="uk-button uk-button-default"><i class="fas fa-trash" />&nbsp;Удалить</button>
-      <button on:click={doUnarchive} class="uk-button uk-button-default"><i
-          class="fas fa-archive" />&nbsp;Восстановить</button>
+      <button on:click={doUnarchive} class="uk-button uk-button-default"
+        ><i class="fas fa-archive" />&nbsp;Восстановить</button
+      >
     {:else}
-      <button on:click={doArchive} class="uk-button uk-button-default"><i class="fas fa-archive" />&nbsp;В архив</button>
+      <button on:click={doArchive} class="uk-button uk-button-default"><i class="fas fa-archive" />&nbsp;В архив</button
+      >
     {/if}
 
     <button on:click={doEdit} class="uk-button uk-button-primary"><i class="fas fa-edit" />&nbsp;Редактировать</button>
-    <!-- <a href={notePdfUrl(entry._id)} class="uk-button uk-button-secondary"><i
-        class="fas fa-file-download" />&nbsp;PDF</a> -->
+    <button on:click={notePdfUrl(entry._id)} class="uk-button uk-button-secondary"><i class="fas fa-file-download" />&nbsp;PDF</button
+    >
     <button on:click={close} class="uk-button uk-button-default"><i class="fas fa-times" />&nbsp;Закрыть</button>
   </div>
   <div class="uk-card uk-card-default uk-card-body">

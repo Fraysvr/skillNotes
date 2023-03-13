@@ -43,11 +43,18 @@
     return fetch();
   };
 
+  let timer;
   const fetchFromScratch = ({ resetNav = true } = {}) => {
-    if (resetNav) {
-      push("/");
+    if (timer) {
+      clearTimeout(timer); // сбрасываем таймер, если он уже установлен
     }
-    return fetch({ reset: true });
+    timer = setTimeout(() => {
+      if (resetNav) {
+        console.log(resetNav);
+        push("/");
+      }
+      return fetch({ reset: true });
+    }, 500);
   };
 
   const refetch = async () => {
@@ -117,15 +124,16 @@
         <option value="archive">архив</option>
       </select>
     </p>
-    <!-- <p class="uk-search uk-search-default uk-width-1-1">
+    <p class="uk-search uk-search-default uk-width-1-1">
       <i uk-search-icon class="uk-icon uk-search-icon fas fa-search" />
       <input
         bind:value={search}
         on:keyup={fetchFromScratch}
         class="uk-search-input uk-width-1-1"
         type="search"
-        placeholder="Поиск по заголовку" />
-    </p> -->
+        placeholder="Поиск по заголовку"
+      />
+    </p>
 
     {#each entries as entry}
       <NoteCard {entry} isActive={entry._id === activeNoteId} />

@@ -1,13 +1,15 @@
 const getDb = require("./db");
 
-const findNotesByUserId = async (userId, age, search, page = 1) => {
+const findNotesByUserId = async (userId, age, search = "", page = 1) => {
   if (age === "alltime") {
     const notes = await getDataNotes(
       {
         userId: userId,
         isArchived: false,
+        title: { $regex: search, $options: "i" },
       },
-      page
+      page,
+      search
     );
     return notes;
   } else if (age === "archive") {
@@ -15,8 +17,10 @@ const findNotesByUserId = async (userId, age, search, page = 1) => {
       {
         userId: userId,
         isArchived: true,
+        title: { $regex: search, $options: "i" },
       },
-      page
+      page,
+      search
     );
     return notes;
   } else {
@@ -24,21 +28,31 @@ const findNotesByUserId = async (userId, age, search, page = 1) => {
     const notes = await getDataNotes(
       {
         userId: userId,
+        title: { $regex: search, $options: "i" },
         created: { $gte: date },
         isArchived: false,
       },
-      page
+      page,
+      search
     );
     return notes;
   }
 };
 
-async function getDataNotes(find, page) {
+async function getDataNotes(find, page, search) {
   const db = await getDb();
   const limit = 20;
   const startIndex = (page - 1) * limit;
-  const endIndex = page * limit - 1;
   const notes = await db.collection("usersNotes").find(find).sort({ _id: -1 }).skip(startIndex).limit(limit).toArray();
+
+  if(search !== '') {
+    notes.forEach((note) => {
+      if (note.title.toLowerCase().includes(search.toLowerCase())) {
+        const regex = new RegExp(search, "gi");
+        note.highlights = note.title.replace(regex, (match) => `<strong>${match}</strong>`);
+      }
+    });
+  }
   return notes;
 }
 

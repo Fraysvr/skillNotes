@@ -1,112 +1,147 @@
-import { id } from "date-fns/locale";
-import { awrap } from "@babel/runtime/regenerator";
-
-const req = (url, options = {}) => {
-  const { body } = options;
-
-  return fetch(url.replace(/\/\/$/, ""), {
-    ...options,
-    body: body ? JSON.stringify(body) : null,
-    headers: {
-      ...options.headers,
-      ...(body
-        ? {
-            "Content-Type": "application/json",
-          }
-        : null),
-    },
-  }).then((res) => {
-    res.ok
-      ? res.json()
-      : res.text().then((message) => {
-          throw new Error(message);
-        });
-  });
-};
-
 export const getNotes = async ({ age, search, page } = {}) => {
-  const notes = await fetch(`/api/notes/get`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ age, search, page }),
-  });
-  return await notes.json();
+  try {
+    const notes = await fetch(`/api/notes/get`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ age, search, page }),
+    });
+    return await notes.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const createNote = async (title, text) => {
-  const newNote = await fetch("/api/notes", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ title, text }),
-  });
-  return await newNote.json();
+  try {
+    const newNote = await fetch("/api/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, text }),
+    });
+    return await newNote.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const getNote = async (id) => {
-  const data = await fetch(`/api/notes/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return await data.json();
+  try {
+    const data = await fetch(`/api/notes/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await data.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const archiveNote = async (id) => {
-  const note = await fetch(`/api/notes/${id}/archiveNote`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ archived: false }),
-  });
-  return await note.json();
+  try {
+    const note = await fetch(`/api/notes/${id}/archiveNote`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ archived: false }),
+    });
+    return await note.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const unarchiveNote = async (id) => {
-  const note = await fetch(`/api/notes/${id}/archiveNote`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ archived: true }),
-  });
-  return await note.json();
+  try {
+    const note = await fetch(`/api/notes/${id}/archiveNote`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ archived: true }),
+    });
+    return await note.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const editNote = async (id, title, text) => {
-  const note = await fetch(`/api/notes/${id}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ title, text }),
-  });
-  return await note.json();
+  try {
+    const note = await fetch(`/api/notes/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, text }),
+    });
+    return await note.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const deleteNote = async (id) => {
-  const note = await fetch(`/api/notes/${id}/delete`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return await note.json();
+  try {
+    const note = await fetch(`/api/notes/${id}/delete`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await note.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const deleteAllArchived = async () => {
-  const notes = await fetch("/api/notes/deleteAllArchived", {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return await notes.json();
+  try {
+    const notes = await fetch("/api/notes/deleteAllArchived", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await notes.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-export const notePdfUrl = (id) => {};
+export const notePdfUrl = async (id) => {
+  try {
+    const response = await fetch(`/api/notes/${id}/pdf`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const contentDisposition = response.headers.get("Content-Disposition");
+    const parts = contentDisposition.split("; ");
+    let filename = "my-notes.pdf";
+    for (const part of parts) {
+      if (part.startsWith("filename=")) {
+        filename = part.substring("filename=".length);
+        break;
+      }
+    }
+    const note = await response.blob();
+    const url = window.URL.createObjectURL(note);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(error);
+  }
+};
