@@ -50,7 +50,6 @@
     }
     timer = setTimeout(() => {
       if (resetNav) {
-        console.log(resetNav);
         push("/");
       }
       return fetch({ reset: true });
