@@ -62,7 +62,7 @@ router.get(
     failureRedirect: "/login",
   }),
   async (req, res) => {
-    const sessionId = await createSession(req.user);
+    const sessionId = await createSession(req.user.id);
     res.cookie("sessionId", sessionId, { httpOnly: true }).redirect("/");
   }
 );
